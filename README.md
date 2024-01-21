@@ -1,1 +1,3 @@
 # Sanlo
+
+`./gradlew run`

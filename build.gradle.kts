@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.22"
+    application
 }
 
 group = "io.vanja"
@@ -18,4 +19,8 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+application {
+    mainClass.set("io.vanja.MainKt")
 }
