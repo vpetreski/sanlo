@@ -12,6 +12,8 @@ data class Metric(
     var marketingSpendDay: Int? = null,
     var paybackRevenue: Float = 0f,
     var paybackPeriod: Int? = null,
+    var totalRevenue: Float = 0f,
+    var ltvCacRatio: Float? = null
 )
 
 class Sanlo {
@@ -34,8 +36,6 @@ class Sanlo {
                 }
 
                 var marketingSpend = row["marketing_spend"]?.trim()
-
-                println(marketingSpend)
 
                 if (marketingSpend == "") {
                     marketingSpend = "0"
@@ -65,6 +65,13 @@ class Sanlo {
                     if (metric.paybackPeriod == null && metric.paybackRevenue >= metric.marketingSpend) {
                         metric.paybackPeriod = date.dayOfMonth - metric.marketingSpendDay!! + 1
                     }
+                }
+
+                metric.totalRevenue += revenue!!.toFloat()
+
+                if (metric.marketingSpend != 0f) {
+                    metric.ltvCacRatio = metric.totalRevenue / metric.marketingSpend
+                    metric.ltvCacRatio
                 }
             }
 
