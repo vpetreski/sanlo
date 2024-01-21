@@ -1,0 +1,12 @@
+company_id,company_name,app_name,risk_score,risk_rating
+106,Astrocraft,Galaxy Stars,86,Undoubted
+105,Cyberdroid Games,Geospace,86,Undoubted
+103,Mind Flourish,Mind Dome,74,Low
+107,Castlecore,Merge Castles,51,Moderate
+104,Guard Games,Guard of Light,51,Moderate
+100,Kutch Games,Kutch Town,51,Moderate
+110,Bluescape,Bluecraft,30,Cautionary
+109,Fitness Champ Games,Fitness Champ,10,Unacceptable
+102,Hunters,Spirit Hunt,0,Unacceptable
+108,Chromarush,Match Zero,0,Unacceptable
+101,SunTropical,Sun Stone,0,Unacceptable
