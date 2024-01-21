@@ -7,6 +7,6 @@ class SanloTest {
     @Test
     fun testExecute() {
         // assertEquals(expected, testSample.sum(40, 2))
-        sanlo.execute()
+        sanlo.execute(true)
     }
 }

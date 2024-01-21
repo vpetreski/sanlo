@@ -4,32 +4,29 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import java.io.InputStream
 import java.time.LocalDate
 
-data class Company(
-    val id: Int,
-    val name: String
-)
-
+data class Company(val id: Int, val name: String)
 data class Metric(
-    val date: LocalDate,
     val appName: String,
     val companyId: Int,
-    val revenue: Float,
-    val marketingSpend: Float
+    var marketingSpend: Float = 0f,
+    var marketingSpendDay: Int? = null,
+    var paybackRevenue: Float = 0f,
+    var paybackPeriod: Int? = null,
 )
 
 class Sanlo {
     private val companies = hashMapOf<Int, Company>()
     private val metrics = hashMapOf<String, Metric>()
 
-    fun execute() {
-        csvReader().open(getCsvFile("app-companies")) {
+    fun execute(test: Boolean = false) {
+        csvReader().open(getCsvFile("${if (test) "example-" else ""}app-companies")) {
             readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
                 val company = Company(row["company_id"]?.trim()!!.toInt(), row["company_name"]?.trim()!!)
                 companies[company.id] = company
             }
         }
 
-        csvReader().open(getCsvFile("app-financial-metrics")) {
+        csvReader().open(getCsvFile("${if (test) "example-" else ""}app-financial-metrics")) {
             readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
                 var revenue = row["revenue"]?.trim()
                 if (revenue == "") {
@@ -37,22 +34,42 @@ class Sanlo {
                 }
 
                 var marketingSpend = row["marketing_spend"]?.trim()
+
+                println(marketingSpend)
+
                 if (marketingSpend == "") {
                     marketingSpend = "0"
                 }
 
-                val metric = Metric(
-                    LocalDate.parse(row["date"]?.trim()),
+                val date = LocalDate.parse(row["date"]?.trim())
+
+                val currentMetric = Metric(
                     row["app_name"]?.trim()!!,
-                    row["company_id"]?.trim()!!.toInt(),
-                    revenue!!.toFloat(),
-                    marketingSpend!!.toFloat(),
+                    row["company_id"]?.trim()!!.toInt()
                 )
 
-                metrics[metric.appName] = metric
+                if (!metrics.contains(currentMetric.appName)) {
+                    metrics[currentMetric.appName] = currentMetric
+                }
 
-                // TODO
+                val metric = metrics[currentMetric.appName]
+
+                if (marketingSpend!!.toFloat() != 0f) {
+                    metric!!.marketingSpend = marketingSpend.toFloat()
+                    metric.marketingSpendDay = date.dayOfMonth
+                }
+
+                if (metric!!.marketingSpendDay != null) {
+                    metric.paybackRevenue += revenue!!.toFloat()
+
+                    if (metric.paybackPeriod == null && metric.paybackRevenue >= metric.marketingSpend) {
+                        metric.paybackPeriod = date.dayOfMonth - metric.marketingSpendDay!! + 1
+                    }
+                }
             }
+
+            // TODO
+            println(metrics)
         }
     }
 
