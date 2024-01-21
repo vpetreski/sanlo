@@ -6,6 +6,7 @@ import java.io.InputStream
 import java.time.LocalDate
 
 data class Company(val id: Int, val name: String)
+
 data class Metric(
     val appName: String,
     val companyId: Int,
@@ -24,6 +25,7 @@ class Sanlo {
     private val metrics = hashMapOf<String, Metric>()
 
     fun execute(test: Boolean = false) {
+        // Load companies data
         csvReader().open(getCsvFile("${if (test) "example-" else ""}app-companies")) {
             readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
                 val company = Company(row["company_id"]?.trim()!!.toInt(), row["company_name"]?.trim()!!)
@@ -31,6 +33,7 @@ class Sanlo {
             }
         }
 
+        // Load metric data and do the math
         csvReader().open(getCsvFile("${if (test) "example-" else ""}app-financial-metrics")) {
             readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
                 var revenue = row["revenue"]?.trim()
@@ -39,7 +42,6 @@ class Sanlo {
                 }
 
                 var marketingSpend = row["marketing_spend"]?.trim()
-
                 if (marketingSpend == "") {
                     marketingSpend = "0"
                 }
@@ -85,6 +87,7 @@ class Sanlo {
             }
         }
 
+        // Save the result
         val rows = mutableListOf(listOf("company_id", "company_name", "app_name", "risk_score", "risk_rating"))
         metrics.toList()
             .sortedByDescending { it.second.riskScore }
@@ -99,8 +102,11 @@ class Sanlo {
                     )
                 )
             }
-
         csvWriter().writeAll(rows, "app-credit-risk-ratings.csv")
+
+        println("####################################################")
+        println("File 'app-credit-risk-ratings.csv' has been created!")
+        println("####################################################")
     }
 
     private fun getPaybackPeriodValue(input: Int): Int {
