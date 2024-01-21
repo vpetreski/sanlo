@@ -1,6 +1,7 @@
 package io.vanja
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.io.InputStream
 import java.time.LocalDate
 
@@ -14,8 +15,8 @@ data class Metric(
     var paybackPeriod: Int? = null,
     var totalRevenue: Float = 0f,
     var ltvCacRatio: Float? = null,
-    var riskScore: Double? = null,
-    var riskRating: String? = null
+    var riskScore: Double = 0.0,
+    var riskRating: String = "Unacceptable"
 )
 
 class Sanlo {
@@ -77,14 +78,29 @@ class Sanlo {
                 }
 
                 if (metric.paybackPeriod != null && metric.ltvCacRatio != null) {
-                    metric.riskScore = getPaybackPeriodValue(metric.paybackPeriod!!) * 0.7 + getLtvCacRatioValue(metric.ltvCacRatio!!) * 0.3
-                    metric.riskRating = getRiskRating(metric.riskScore!!)
+                    metric.riskScore =
+                        getPaybackPeriodValue(metric.paybackPeriod!!) * 0.7 + getLtvCacRatioValue(metric.ltvCacRatio!!) * 0.3
+                    metric.riskRating = getRiskRating(metric.riskScore)
                 }
             }
-
-            // TODO
-            println(metrics)
         }
+
+        val rows = mutableListOf(listOf("company_id", "company_name", "app_name", "risk_score", "risk_rating"))
+        metrics.toList()
+            .sortedByDescending { it.second.riskScore }
+            .forEach { (_, v) ->
+                rows.add(
+                    listOf(
+                        v.companyId.toString(),
+                        companies[v.companyId]!!.name,
+                        v.appName,
+                        v.riskScore.toInt().toString(),
+                        v.riskRating
+                    )
+                )
+            }
+
+        csvWriter().writeAll(rows, "app-credit-risk-ratings.csv")
     }
 
     private fun getPaybackPeriodValue(input: Int): Int {
