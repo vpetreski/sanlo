@@ -10,7 +10,10 @@ repositories {
     mavenCentral()
 }
 
+val kotlinCsvVersion = "1.9.3"
+
 dependencies {
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:$kotlinCsvVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
