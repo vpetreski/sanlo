@@ -1,11 +1,11 @@
 package io.vanja
 
 class Sanlo {
-    fun run() {
+    fun execute() {
         println("Hello World!")
     }
 }
 
 fun main() {
-    Sanlo().run()
+    Sanlo().execute()
 }

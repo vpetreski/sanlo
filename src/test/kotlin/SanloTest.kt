@@ -5,8 +5,8 @@ class SanloTest {
     private val sanlo: Sanlo = Sanlo()
 
     @Test
-    fun run() {
+    fun testExecute() {
         // assertEquals(expected, testSample.sum(40, 2))
-        sanlo.run()
+        sanlo.execute()
     }
 }
