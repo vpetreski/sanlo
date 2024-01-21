@@ -22,5 +22,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("io.vanja.MainKt")
+    mainClass.set("io.vanja.SanloKt")
 }
