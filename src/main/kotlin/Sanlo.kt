@@ -13,7 +13,9 @@ data class Metric(
     var paybackRevenue: Float = 0f,
     var paybackPeriod: Int? = null,
     var totalRevenue: Float = 0f,
-    var ltvCacRatio: Float? = null
+    var ltvCacRatio: Float? = null,
+    var riskScore: Double? = null,
+    var riskRating: String? = null
 )
 
 class Sanlo {
@@ -73,10 +75,52 @@ class Sanlo {
                     metric.ltvCacRatio = metric.totalRevenue / metric.marketingSpend
                     metric.ltvCacRatio
                 }
+
+                if (metric.paybackPeriod != null && metric.ltvCacRatio != null) {
+                    metric.riskScore = getPaybackPeriodValue(metric.paybackPeriod!!) * 0.7 + getLtvCacRatioValue(metric.ltvCacRatio!!) * 0.3
+                    metric.riskRating = getRiskRating(metric.riskScore!!)
+                }
             }
 
             // TODO
             println(metrics)
+        }
+    }
+
+    private fun getPaybackPeriodValue(input: Int): Int {
+        return when (input) {
+            in 0..6 -> 100
+            in 7..13 -> 80
+            in 14..20 -> 60
+            in 21..27 -> 30
+            else -> {
+                10
+            }
+        }
+    }
+
+    private fun getLtvCacRatioValue(input: Float): Int {
+        return when {
+            input >= 3.0 -> 100
+            input >= 2.5 && input < 3.0 -> 80
+            input >= 2.0 && input < 2.5 -> 60
+            input >= 1.5 && input < 2.0 -> 30
+            else -> {
+                10
+            }
+        }
+    }
+
+    private fun getRiskRating(input: Double): String {
+        return when (input) {
+            in 85.0..100.0 -> "Undoubted"
+            in 65.0..84.0 -> "Low"
+            in 45.0..64.0 -> "Moderate"
+            in 25.0..44.0 -> "Cautionary"
+            in 15.0..24.0 -> "Unsatisfactory"
+            else -> {
+                "Unacceptable"
+            }
         }
     }
 
